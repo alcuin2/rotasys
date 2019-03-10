@@ -3,10 +3,12 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
 from flask_wtf.csrf import CsrfProtect
+from rotasys.middleware import ReverseProxied
 
 csrf = CsrfProtect()
 
 app = Flask(__name__)
+app.wsgi_app = ReverseProxied(app.wsgi_app)
 
 app.config["SECRET_KEY"] = "63dc08a349bdb03a2ejcgvdudvdjvyfvdjcjdbdgccldbdkghd"
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///site.db"
@@ -17,7 +19,6 @@ login_manager = LoginManager(app)
 login_manager.login_view = 'auth.login'
 login_manager.login_message_category = "info"
 login_manager.login_message = "Please log in to access this page"
-app.config["APPLICATION_ROOT"] = "/rota"
 
 
 csrf.init_app(app)
