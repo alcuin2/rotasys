@@ -93,7 +93,7 @@
                       {% for staff in staff.items %}
                         <tr>
 
-                          <td><a href="invoice.html" class="text-inherit">{{ staff.fullname }}</a></td>
+                          <td><a href="{{ url_for('admin.edit_staff', staff_id=staff.id) }}" class="text-inherit">{{ staff.fullname }}</a></td>
                           <td>
                             {{ staff.email }}
                           </td>
@@ -102,7 +102,7 @@
                             {{ staff.date_joined }}
                           </td>
                           <td>
-                            {{ staff.schedule|count }}
+                              <a href="{{ url_for('admin.staff_schedules', staff_id=staff.id) }}">{{ staff.schedule|count }}</a>
                           </td>
                             <td>
                                 {% if staff.active %}
@@ -119,7 +119,7 @@
                             </div>
                           </td>
                           <td>
-                            <a class="icon" href="javascript:void(0)">
+                            <a class="icon" href="{{ url_for('admin.edit_staff', staff_id=staff.id) }}">
                               <i class="fe fe-edit"></i>
                             </a>
                           </td>

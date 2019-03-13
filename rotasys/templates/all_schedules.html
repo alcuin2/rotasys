@@ -8,7 +8,7 @@
                     <a href="{{ url_for('admin.home') }}" class="nav-link "><i class="fe fe-home"></i> Home</a>
                   </li>
                   <li class="nav-item">
-                    <a href="javascript:void(0)" class="nav-link" data-toggle="dropdown"><i class="fe fe-box"></i> Staff</a>
+                    <a href="javascript:void(0)" class="nav-link active" data-toggle="dropdown"><i class="fe fe-box"></i> Staff</a>
                     <div class="dropdown-menu dropdown-menu-arrow">
                       <a href="{{ url_for('admin.create_staff') }}" class="dropdown-item ">Create New Staff</a>
                       <a href="{{ url_for('admin.all_staff') }}" class="dropdown-item ">All Staff</a>
@@ -23,7 +23,7 @@
                     </div>
                   </li>
                     <li class="nav-item dropdown">
-                    <a href="javascript:void(0)" class="nav-link active" data-toggle="dropdown"><i class="fe fe-calendar"></i> Role</a>
+                    <a href="javascript:void(0)" class="nav-link" data-toggle="dropdown"><i class="fe fe-calendar"></i> Role</a>
                     <div class="dropdown-menu dropdown-menu-arrow">
                       <a href="{{ url_for('admin.create_role') }}" class="dropdown-item ">Create New Role</a>
                       <a href="{{ url_for('admin.all_roles') }}" class="dropdown-item ">All Roles</a>
@@ -70,7 +70,7 @@
 <div class="col-12 mt-3">
                 <div class="card">
                   <div class="card-header">
-                    <h3 class="card-title">All Roles</h3>
+                    <h3 class="card-title">Schedules for <b>{{ staff.fullname }}</b></h3>
                   </div>
 
                   <div class="table-responsive">
@@ -78,30 +78,41 @@
                       <thead>
                         <tr>
 
-                          <th>Title</th>
-                          <th>Date created</th>
-                          <th></th>
+                          <th>Shift</th>
+                          <th>Day</th>
+                            <th>Month</th>
+                          <th>Year</th>
+
+                          <th>Client</th>
                           <th></th>
                         </tr>
                       </thead>
                       <tbody>
-                      {% if roles.items %}
-                      {% for role in roles.items %}
+                      {% if schedules.items %}
+                      {% for schedule in schedules.items %}
                         <tr>
 
-                          <td><a href="#" class="text-inherit">{{ role.title }}</a></td>
+                          <td><a href="{{ url_for('admin.edit_staff', staff_id=staff.id) }}" class="text-inherit">{{ schedule.shift }}</a></td>
                           <td>
-                            {{ role.date_joined }}
+                            {{ schedule.day }}
                           </td>
+                            <td>{{ schedule.month }}</td>
+                          <td>
+                            {{ schedule.year }}
+                          </td>
+                            <td>
+                                {{ schedule.id|get_client_from_schedule }}
+                            </td>
+
 
                           <td class="text-right">
                             <a href="javascript:void(0)" class="btn btn-secondary btn-sm">Manage</a>
                             <div class="dropdown">
-                              <a href="{{ url_for('admin.delete_role', role_id=role.id) }} "class="btn btn-danger btn-sm" style="color: white">Delete</a>
+                              <a href="{{ url_for('admin.delete_staff', staff_id=staff.id) }} "class="btn btn-danger btn-sm" style="color: white">Delete</a>
                             </div>
                           </td>
                           <td>
-                            <a class="icon" href="javascript:void(0)">
+                            <a class="icon" href="{{ url_for('admin.edit_staff', staff_id=staff.id) }}">
                               <i class="fe fe-edit"></i>
                             </a>
                           </td>
@@ -110,18 +121,18 @@
                       {% else %}
                       <tr>
                           <td colspan="7">
-                              <p> No role listed </p>
+                              <p> No staff listed </p>
                           </td>
                       </tr>
                       {% endif %}
                       <tr>
                           <td colspan="7">
-                          {% for page_num in roles.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+                          {% for page_num in schedules.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
                             {% if page_num %}
-                                {% if roles.page == page_num %}
-                                    <a class="btn btn-info mb-4" href="{{ url_for('admin.all_roles',  page=page_num) }}">{{ page_num }}</a>
+                                {% if schedules.page == page_num %}
+                                    <a class="btn btn-info mb-4" href="{{ url_for('admin.staff_schedules',  page=page_num, staff_id=staff.id) }}">{{ page_num }}</a>
                                 {% else %}
-                                 <a class="btn btn-outline-info mb-4" href="{{ url_for('admin.all_roles', page=page_num) }}">{{ page_num }}</a>
+                                 <a class="btn btn-outline-info mb-4" href="{{ url_for('admin.staff_schedules', page=page_num, staff_id=staff.id) }}">{{ page_num }}</a>
                                 {% endif %}
                             {% else %}
                                     ...

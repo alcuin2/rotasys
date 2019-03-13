@@ -35,7 +35,7 @@ def login():
     return render_template("login.html", title="RotaSys | Admin Login")
 
 
-"""
+
 @auth.route("/register", methods=['GET', 'POST'])
 def register():
     if request.method == "POST":
@@ -57,8 +57,7 @@ def register():
             return redirect(url_for('auth.register'))
 
     return render_template("register.html", title="RotaSys | Admin Register")
-    
-"""
+
 
 
 @auth.route("/logout")

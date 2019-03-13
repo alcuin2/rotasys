@@ -6,7 +6,10 @@ from rotasys import db
 from rotasys.admin.models import Staff, Client, Schedule, Role, Shift
 from rotasys.auth.models import User
 
-from rotasys.admin.utils import get_week_day, get_week_number, get_month, get_year
+from rotasys.admin.utils import (get_week_day, get_week_number, get_month, get_year,
+                                 get_start_date, get_end_date)
+
+from rotasys.admin.utils import days
 
 admin = Blueprint("admin", __name__)
 
@@ -51,6 +54,30 @@ def read_staff(staff_id):
     if staff is None:
         return render_template("404.html", title="RotaSys | Not Found")
     return render_template("staff_details.html", title="RotaSys | Staff Details", staff=staff)
+
+
+@admin.route("/staff/edit/<int:staff_id>", methods=["POST", "GET"])
+def edit_staff(staff_id):
+    staff = Staff.query.get(staff_id)
+    if staff is None:
+        return render_template("404.html", title="RotaSys | Not Found")
+    roles = Role.query.all()
+    if request.method == "POST":
+        form_dict = request.form.to_dict()
+        print(form_dict)
+        staff.fullname = form_dict["fullname"]
+        staff.email = form_dict["email"]
+        staff.role = form_dict["role"]
+        if request.form.get("active", "") == "1":
+            staff.active = True
+        else:
+            staff.active = False
+        staff.date_updated = datetime.datetime.utcnow()
+        db.session.commit()
+        flash("Staff edited", "success")
+        return redirect(url_for("admin.all_staff"))
+
+    return render_template("edit_staff.html", staff=staff, roles=roles)
 
 
 @admin.route("/staff/all")
@@ -206,22 +233,29 @@ def delete_shift(shift_id):
     return redirect(url_for("admin.all_shifts"))
 
 
-@admin.route("/schedule/create", methods=["POST", "GET"])
+@admin.route("/schedule/staff/<int:staff_id>", methods=["POST", "GET"])
 @login_required
-def create_schedule():
+def add_staff_schedule(staff_id):
 
+    staff = Staff.query.get(staff_id)
+    if staff is None:
+        return render_template("404.html", title="RotaSys | Not Found")
+    clients = Client.query.all()
+    shifts = Shift.query.all()
     if request.method == "POST":
         form_dict = request.form.to_dict()
-        shift = form_dict["shift"]
+        print(form_dict)
         date_string = form_dict["date"]
-        date = datetime.strptime(date_string, "%d/%m/%Y").date()
+        date = datetime.datetime.strptime(date_string, "%Y-%m-%d").date()
         week_number = get_week_number(date)
         day = get_week_day(date)
         month = get_month(date)
         year = get_year(date)
-        new_schedule = Schedule(staff_id=form_dict["staff_id"],
-                                client_id=form_dict["client_id"],
-                                shift=shift,
+        new_schedule = Schedule(staff_id=staff.id,
+                                client_id=form_dict["client"],
+                                shift=form_dict["shift"],
+                                day_number=date.isocalendar()[2],
+                                date=date,
                                 week_number=week_number,
                                 day=day,
                                 month=month,
@@ -229,16 +263,46 @@ def create_schedule():
         db.session.add(new_schedule)
         db.session.commit()
         flash("New schedule added successfully", "success")
-        return redirect(url_for("admin.create_schedule"))
+        return redirect(url_for("admin.add_staff_schedule", staff_id=staff.id))
 
-    return render_template("create_role.html", title="RotaSys | Create Schedule")
-
-
-
+    return render_template("staff_add_schedule.html", title="RotaSys | Create Schedule", staff=staff,
+                           clients=clients, shifts=shifts)
 
 
+@admin.route("/schedule/staff/all/<int:staff_id>")
+def staff_schedules(staff_id):
+
+    staff = Staff.query.get(staff_id)
+    if staff is None:
+        return render_template("404.html", title="RotaSys | Not Found")
+    page = request.args.get('page', 1, type=int)
+
+    schedules = Schedule.query.filter_by(staff_id=staff.id).order_by(Schedule.date_updated.desc())\
+        .paginate(page=page, per_page=20)
+    return render_template("all_schedules.html", staff=staff, schedules=schedules)
 
 
+@admin.route("/rota/generate/<int:week_number>")
+@admin.route("/rota/generate")
+def generate_rota(week_number=None):
+
+    if week_number is None:
+        date = datetime.datetime.utcnow()
+        week_number = date.isocalendar()[1]
+    query = db.session.query(Schedule.staff_id.distinct().label("staff_id"))
+    staff_ids = [row.staff_id for row in query.all()]
+    schedules = []
+    for staff in staff_ids:
+        weekdays = []
+        for day in days.values():
+            staff_schedules_ = Schedule.query.filter_by(staff_id=staff).filter_by(week_number=week_number)\
+                .filter_by(day=day).order_by(Schedule.day_number.asc()).all()
+            weekdays.append(staff_schedules_)
+        schedules.append({"staff_id": staff, "days": weekdays})
+
+    start_date = get_start_date(week_number)
+    end_date = get_end_date(week_number)
+    return render_template("rota.html", schedules=schedules, week_number=week_number)
 
 
 

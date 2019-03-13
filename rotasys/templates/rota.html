@@ -23,7 +23,7 @@
                     </div>
                   </li>
                     <li class="nav-item dropdown">
-                    <a href="javascript:void(0)" class="nav-link active" data-toggle="dropdown"><i class="fe fe-calendar"></i> Role</a>
+                    <a href="javascript:void(0)" class="nav-link" data-toggle="dropdown"><i class="fe fe-calendar"></i> Role</a>
                     <div class="dropdown-menu dropdown-menu-arrow">
                       <a href="{{ url_for('admin.create_role') }}" class="dropdown-item ">Create New Role</a>
                       <a href="{{ url_for('admin.all_roles') }}" class="dropdown-item ">All Roles</a>
@@ -39,7 +39,7 @@
                     </div>
                   </li>
                    <li class="nav-item dropdown">
-                    <a href="{{ url_for('admin.generate_rota', week_number=None) }}" class="nav-link" data-toggle="dropdown"><i class="fe fe-calendar"></i> Rota</a>
+                    <a href="{{ url_for('admin.generate_rota', week_number=None) }}" class="nav-link active" data-toggle="dropdown"><i class="fe fe-calendar"></i> Rota</a>
 
                   </li>
                     <li class="nav-item dropdown">
@@ -70,7 +70,8 @@
 <div class="col-12 mt-3">
                 <div class="card">
                   <div class="card-header">
-                    <h3 class="card-title">All Roles</h3>
+                    <h3 class="card-title">Rota</h3>
+
                   </div>
 
                   <div class="table-responsive">
@@ -78,58 +79,69 @@
                       <thead>
                         <tr>
 
-                          <th>Title</th>
-                          <th>Date created</th>
-                          <th></th>
-                          <th></th>
+                          <th>Staff</th>
+                          <th>Role</th>
+                            <th>Monday</th>
+                          <th>Tuesday</th>
+
+                          <th>Wednesday</th>
+                          <th>Thursday</th>
+                            <th>Friday</th>
+                            <th>Saturday</th>
+                            <th>Sunday</th>
+
                         </tr>
                       </thead>
                       <tbody>
-                      {% if roles.items %}
-                      {% for role in roles.items %}
+                      {% if schedules %}
+                      {% for schedule in schedules %}
                         <tr>
 
-                          <td><a href="#" class="text-inherit">{{ role.title }}</a></td>
+                          <td><a href="#" class="text-inherit">{{ schedule["staff_id"]|get_staff_from_schedule }}</a></td>
                           <td>
-                            {{ role.date_joined }}
+                            {{ schedule["staff_id"]|get_staff_role }}
                           </td>
+                            <td>{{ schedule["days"][0]|format_schedules|safe }}</td>
+                            <td>
+                                {{ schedule["days"][1]|format_schedules|safe }}
+                            </td>
+                            <td>
+                                {{ schedule["days"][2]|format_schedules|safe }}
+                            </td>
+                            <td>
+                                {{ schedule["days"][3]|format_schedules|safe }}
+                            </td>
+                            <td>
+                                {{ schedule["days"][4]|format_schedules|safe }}
+                            </td>
+                            <td>
+                                {{ schedule["days"][5]|format_schedules|safe }}
+                            </td>
+                            <td>
+                                {{ schedule["days"][6]|format_schedules|safe }}
+                            </td>
 
-                          <td class="text-right">
-                            <a href="javascript:void(0)" class="btn btn-secondary btn-sm">Manage</a>
-                            <div class="dropdown">
-                              <a href="{{ url_for('admin.delete_role', role_id=role.id) }} "class="btn btn-danger btn-sm" style="color: white">Delete</a>
-                            </div>
-                          </td>
-                          <td>
-                            <a class="icon" href="javascript:void(0)">
-                              <i class="fe fe-edit"></i>
-                            </a>
-                          </td>
+
                         </tr>
                       {% endfor %}
                       {% else %}
                       <tr>
-                          <td colspan="7">
-                              <p> No role listed </p>
+                          <td colspan="9">
+                              <p> No schedules listed </p>
                           </td>
                       </tr>
-                      {% endif %}
+                         {% endif %}
                       <tr>
-                          <td colspan="7">
-                          {% for page_num in roles.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
-                            {% if page_num %}
-                                {% if roles.page == page_num %}
-                                    <a class="btn btn-info mb-4" href="{{ url_for('admin.all_roles',  page=page_num) }}">{{ page_num }}</a>
-                                {% else %}
-                                 <a class="btn btn-outline-info mb-4" href="{{ url_for('admin.all_roles', page=page_num) }}">{{ page_num }}</a>
-                                {% endif %}
-                            {% else %}
-                                    ...
-                            {% endif %}
-                            </td>
-                      {% endfor %}
+                          <td colspan="9">
 
-                      </tr>
+
+                              <a class="btn btn-info mb-4" href="{{ url_for('admin.generate_rota',  week_number=week_number - 1) }}">Previous week</a>
+
+                              <a class="btn btn-outline-info mb-4" href="{{ url_for('admin.generate_rota',  week_number=week_number + 1) }}">Next week</a>
+
+                            </td>
+
+
 
 
                       </tbody>

@@ -25,6 +25,7 @@ csrf.init_app(app)
 
 from rotasys.auth.routes import auth
 from rotasys.admin.routes import admin
+from rotasys.admin import filters
 
 app.register_blueprint(auth)
 app.register_blueprint(admin)

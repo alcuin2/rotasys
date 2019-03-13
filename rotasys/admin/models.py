@@ -30,7 +30,7 @@ class Client(db.Model):
 
     def __repr__(self):
 
-        return f"Client: {self.fullname}"
+        return f"{self.fullname}"
 
 
 class Schedule(db.Model):
@@ -40,9 +40,11 @@ class Schedule(db.Model):
     client_id = db.Column(db.Integer, db.ForeignKey("client.id"))
     shift = db.Column(db.String(20), nullable=False)
     day = db.Column(db.String(20), nullable=False)
+    day_number = db.Column(db.Integer)
     week_number = db.Column(db.Integer, nullable=False)
     month = db.Column(db.String(20), nullable=False)
     year = db.Column(db.Integer, nullable=False)
+    date = db.Column(db.DateTime,  nullable=False)
     staff = db.relationship(Staff, backref=db.backref("schedule", cascade="all, delete-orphan"))
     client = db.relationship(Client, backref=db.backref("schedule", cascade="all, delete-orphan"))
     date_created = db.Column(db.DateTime, default=datetime.utcnow())
@@ -50,7 +52,7 @@ class Schedule(db.Model):
 
     def __repr__(self):
 
-        return f"Schedule: {self.shift}"
+        return f"{self.shift} - {self.client}"
 
 
 class Role(db.Model):
