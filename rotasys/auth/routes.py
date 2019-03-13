@@ -59,7 +59,6 @@ def register():
     return render_template("register.html", title="RotaSys | Admin Register")
 
 
-
 @auth.route("/logout")
 def logout():
 
