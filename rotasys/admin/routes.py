@@ -304,6 +304,31 @@ def staff_schedules(staff_id):
     return render_template("all_schedules.html", staff=staff, schedules=schedules)
 
 
+@admin.route("/schedule/delete/<int:schedule_id>")
+def delete_schedule(schedule_id):
+    schedule = Schedule.query.get(schedule_id)
+    if schedule is None:
+        return render_template("404.html", title="RotaSys | Not Found")
+
+    db.session.delete(schedule)
+    db.session.commit()
+    flash("Delete successful", "info")
+    return redirect(url_for("admin.staff_schedules", staff_id=schedule.staff_id))
+
+
+@admin.route("/schedule/edit/<int:schedule_id>")
+def edit_schedule(schedule_id):
+    schedule = Schedule.query.get(schedule_id)
+    if schedule is None:
+        return render_template("404.html", title="RotaSys | Not Found")
+
+    db.session.delete(schedule)
+    db.session.commit()
+    flash("Delete successful", "info")
+    return redirect(url_for("admin.staff_schedules", staff_id=schedule.staff_id))
+
+
+
 '''
 @admin.route("/rota/generate/<int:week_number>")
 @admin.route("/rota/generate")
@@ -333,10 +358,7 @@ def generate_rota(week_number=None):
 @admin.route("/download/timesheet")
 def download_timesheet():
 
-    path = os.getcwd()
-
-    with open(path + "/rotasys/static/assets/files/timesheet.pdf", 'rb') as static_file:
-        return send_file(static_file, mimetype="application/pdf")
+    redirect("/static/assets/files/timesheet.pdf")
 
 
 @admin.route("/download/report/<int:week_number>/<int:year>")
