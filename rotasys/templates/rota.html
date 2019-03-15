@@ -93,8 +93,8 @@
                         </tr>
                       </thead>
                       <tbody>
-                      {% if schedules %}
-                      {% for schedule in schedules %}
+                      {% if schedules_ %}
+                      {% for schedule in schedules_ %}
                         <tr>
 
                           <td><a href="#" class="text-inherit">{{ schedule["staff_id"]|get_staff_from_schedule }}</a></td>

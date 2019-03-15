@@ -1,4 +1,5 @@
 import datetime
+import os
 from flask import Blueprint, render_template, url_for, request, flash, redirect, send_file
 from flask_login import login_required, current_user
 
@@ -15,8 +16,9 @@ admin = Blueprint("admin", __name__)
 
 
 @admin.route("/")
+@admin.route("/<int:week_number>")
 @login_required
-def home():
+def home(week_number=None):
 
     staff = Staff.query.all()
     clients = Client.query.all()
@@ -25,9 +27,29 @@ def home():
     users = User.query.all()
     shifts = Shift.query.all()
 
+    if week_number is None:
+        date = datetime.datetime.utcnow()
+        week_number = date.isocalendar()[1]
+        year = date.isocalendar()[0]
+    query = db.session.query(Schedule.staff_id.distinct().label("staff_id"))
+    staff_ids = [row.staff_id for row in query.all()]
+    schedules_ = []
+    for staff_id in staff_ids:
+        weekdays = []
+        for day in days.values():
+            staff_schedules_ = Schedule.query.filter_by(staff_id=staff_id).filter_by(week_number=week_number).\
+                filter_by(year=year).filter_by(day=day).order_by(Schedule.day_number.asc()).all()
+            weekdays.append(staff_schedules_)
+
+        schedules_.append({"staff_id": staff_id, "days": weekdays})
+
+    start_date = get_start_date(week_number)
+    end_date = get_end_date(week_number)
+
     return render_template("home.html", title="RotaSys | Dashboard",
                            staff=staff, clients=clients, schedules=schedules,
-                           roles=roles, users=users, shifts=shifts)
+                           schedules_=schedules_, week_number=week_number,
+                           roles=roles, users=users, shifts=shifts, year=year)
 
 
 @admin.route("/staff/create", methods=["POST", "GET"])
@@ -282,6 +304,7 @@ def staff_schedules(staff_id):
     return render_template("all_schedules.html", staff=staff, schedules=schedules)
 
 
+'''
 @admin.route("/rota/generate/<int:week_number>")
 @admin.route("/rota/generate")
 def generate_rota(week_number=None):
@@ -304,14 +327,21 @@ def generate_rota(week_number=None):
     start_date = get_start_date(week_number)
     end_date = get_end_date(week_number)
     return render_template("rota.html", schedules=schedules, week_number=week_number)
+'''
 
 
 @admin.route("/download/timesheet")
 def download_timesheet():
 
-    return send_file("static/files/timesheet.pdf", mimetype="application/pdf")
+    path = os.getcwd()
+
+    with open(path + "/rotasys/static/assets/files/timesheet.pdf", 'rb') as static_file:
+        return send_file(static_file, mimetype="application/pdf")
 
 
+@admin.route("/download/report/<int:week_number>/<int:year>")
+def download_report(week_number, year):
+    pass
 
 
 
