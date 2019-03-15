@@ -1,10 +1,11 @@
 {% extends "layout.html" %}
 
 {% block navigation %}
+
 <div class="col-lg order-lg-first">
                 <ul class="nav nav-tabs border-0 flex-column flex-lg-row">
                   <li class="nav-item">
-                    <a href="{{ url_for('admin.home') }}" class="nav-link "><i class="fe fe-home"></i> Home</a>
+                    <a href="{{ url_for('admin.home') }}" class="nav-link"><i class="fe fe-home"></i> Home</a>
                   </li>
                   <li class="nav-item">
                     <a href="javascript:void(0)" class="nav-link" data-toggle="dropdown"><i class="fe fe-box"></i> Staff</a>
@@ -22,7 +23,7 @@
                     </div>
                   </li>
                     <li class="nav-item dropdown">
-                    <a href="javascript:void(0)" class="nav-link active" data-toggle="dropdown"><i class="fe fe-calendar"></i> Role</a>
+                    <a href="javascript:void(0)" class="nav-link" data-toggle="dropdown"><i class="fe fe-calendar"></i> Role</a>
                     <div class="dropdown-menu dropdown-menu-arrow">
                       <a href="{{ url_for('admin.create_role') }}" class="dropdown-item ">Create New Role</a>
                       <a href="{{ url_for('admin.all_roles') }}" class="dropdown-item ">All Roles</a>
@@ -39,7 +40,7 @@
                   </li>
 
                     <li class="nav-item dropdown">
-                    <a href="javascript:void(0)" class="nav-link" data-toggle="dropdown"><i class="fe fe-calendar"></i> Users</a>
+                    <a href="javascript:void(0)" class="nav-link active" data-toggle="dropdown"><i class="fe fe-calendar"></i> Users</a>
                      <div class="dropdown-menu dropdown-menu-arrow">
                       <a href="{{ url_for('auth.create_user') }}" class="dropdown-item ">Create New User</a>
                       <a href="{{ url_for('auth.all_users') }}" class="dropdown-item ">All Users</a>
@@ -53,8 +54,8 @@
                 </ul>
               </div>
 
-{% endblock navigation %}
 
+{% endblock navigation %}
 
 {% block content %}
 
@@ -72,17 +73,24 @@
                   {% endfor %}
                 {% endif %}
               {% endwith %}
-              <form class="card" action="{{ url_for('admin.create_role') }}" method="post">
+              <form class="card" action="{{ url_for('auth.create_user') }}" method="post">
                 <div class="card-body p-6">
-                  <div class="card-title">Create new role</div>
+                  <div class="card-title">Create new user</div>
                   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                   <div class="form-group">
-                    <label class="form-label">Title</label>
-                    <input type="text" class="form-control" placeholder="Enter role title" name="title" required>
+                    <label class="form-label">Name</label>
+                    <input type="text" class="form-control" placeholder="Enter name" name="fullname" required>
                   </div>
-
+                  <div class="form-group">
+                    <label class="form-label">Email address</label>
+                    <input type="email" class="form-control" placeholder="Enter email" name="email" >
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input type="password" class="form-control" placeholder="Password" name="password">
+                  </div>
                   <div class="form-footer">
-                    <button type="submit" class="btn btn-primary btn-block">Create new role</button>
+                    <button type="submit" class="btn btn-primary btn-block">Create new user</button>
                   </div>
                 </div>
               </form>

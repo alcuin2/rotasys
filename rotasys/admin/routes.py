@@ -341,6 +341,21 @@ def edit_schedule(schedule_id):
     return redirect(url_for("admin.staff_schedules", staff_id=schedule.staff_id))
 
 
+@admin.route("/search")
+@login_required
+def search():
+    query_string = request.args.get('q', "")
+    if query_string is None:
+        return redirect(url_for('admin.home'))
+    users = User.query.filter(User.fullname.contains(query_string)).all()
+    staff = Staff.query.filter(Staff.fullname.contains(query_string)).all()
+    clients = Client.query.filter(Client.fullname.contains(query_string)).all()
+
+    flash("Search results", "info")
+
+    return render_template("search_results.html", users=users, staff=staff,
+                           clients=clients, query_string=query_string)
+
 
 '''
 @admin.route("/rota/generate/<int:week_number>")

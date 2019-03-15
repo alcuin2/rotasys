@@ -5,7 +5,7 @@
 <div class="col-lg order-lg-first">
                 <ul class="nav nav-tabs border-0 flex-column flex-lg-row">
                   <li class="nav-item">
-                    <a href="{{ url_for('admin.home') }}" class="nav-link "><i class="fe fe-home"></i> Home</a>
+                    <a href="{{ url_for('admin.home') }}" class="nav-link active "><i class="fe fe-home"></i> Home</a>
                   </li>
                   <li class="nav-item">
                     <a href="javascript:void(0)" class="nav-link" data-toggle="dropdown"><i class="fe fe-box"></i> Staff</a>
@@ -15,7 +15,7 @@
                     </div>
                   </li>
                   <li class="nav-item dropdown">
-                    <a href="javascript:void(0)" class="nav-link active" data-toggle="dropdown"><i class="fe fe-calendar"></i> Client</a>
+                    <a href="javascript:void(0)" class="nav-link" data-toggle="dropdown"><i class="fe fe-calendar"></i> Client</a>
                     <div class="dropdown-menu dropdown-menu-arrow">
                       <a href="{{ url_for('admin.create_client') }}" class="dropdown-item ">Create New Client</a>
                       <a href="{{ url_for('admin.all_clients') }}" class="dropdown-item ">All Clients</a>
@@ -38,6 +38,7 @@
 
                     </div>
                   </li>
+
                     <li class="nav-item dropdown">
                     <a href="javascript:void(0)" class="nav-link" data-toggle="dropdown"><i class="fe fe-calendar"></i> Users</a>
                     <div class="dropdown-menu dropdown-menu-arrow">
@@ -46,7 +47,7 @@
 
                     </div>
                   </li>
-                    <li class="nav-item dropdown">
+                     <li class="nav-item dropdown">
                     <a href="{{ url_for('admin.download_timesheet') }}" class="nav-link"><i class="fe fe-calendar"></i> Download Timesheet</a>
 
                   </li>
@@ -70,7 +71,7 @@
 <div class="col-12 mt-3">
                 <div class="card">
                   <div class="card-header">
-                    <h3 class="card-title">All Clients</h3>
+                    <h3 class="card-title">Results for Clients matching "{{ query_string }}"</h3>
                   </div>
 
                   <div class="table-responsive">
@@ -88,11 +89,11 @@
                         </tr>
                       </thead>
                       <tbody>
-                      {% if clients.items %}
-                      {% for client in clients.items %}
+                      {% if clients %}
+                      {% for client in clients %}
                         <tr>
 
-                          <td><a href="invoice.html" class="text-inherit">{{ client.fullname }}</a></td>
+                          <td><a href="#" class="text-inherit">{{ client.fullname }}</a></td>
                           <td>
                             {{ client.email }}
                           </td>
@@ -111,42 +112,142 @@
                                 {% endif %}
                             </td>
 
-                          <td class="text-right">
-                            <a href="javascript:void(0)" class="btn btn-secondary btn-sm">Manage</a>
-                            <div class="dropdown">
-                              <a href="{{ url_for('admin.delete_client', client_id=client.id) }} "class="btn btn-danger btn-sm" style="color: white">Delete</a>
-                            </div>
-                          </td>
-                          <td>
-                            <a class="icon" href="javascript:void(0)">
-                              <i class="fe fe-edit"></i>
-                            </a>
-                          </td>
                         </tr>
                       {% endfor %}
                       {% else %}
                       <tr>
                           <td colspan="7">
-                              <p> No client listed </p>
+                              <p> No client found </p>
                           </td>
                       </tr>
                       {% endif %}
+
+
+
+                      </tbody>
+                    </table>
+
+                  </div>
+                </div>
+              </div>
+
+
+
+<div class="col-12 mt-3">
+                <div class="card">
+                  <div class="card-header">
+                    <h3 class="card-title">Results for Users matching "{{ query_string }}"</h3>
+                  </div>
+
+                  <div class="table-responsive">
+                    <table class="table card-table table-vcenter text-nowrap">
+                      <thead>
+                        <tr>
+
+                          <th>Fullname</th>
+                          <th>Email</th>
+
+                          <th>Date joined</th>
+
+                          <th>Status</th>
+                          <th></th>
+                          <th></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                      {% if users %}
+                      {% for user in users %}
+                        <tr>
+
+                          <td><a href="{{ url_for('auth.edit_user', user_id=user.id) }}" class="text-inherit">{{ user.fullname }}</a></td>
+                          <td>
+                            {{ user.email }}
+                          </td>
+
+                          <td>
+                            {{ user.date_joined }}
+                          </td>
+
+                            <td>
+                                {% if user.verified %}
+                                <span class="badge badge-success">Verified</span>
+                                {% else %}
+                                <span class="badge badge-danger">Unverified</span>
+                                {% endif %}
+                            </td>
+
+                        </tr>
+                      {% endfor %}
+                      {% else %}
                       <tr>
                           <td colspan="7">
-                          {% for page_num in clients.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
-                            {% if page_num %}
-                                {% if clients.page == page_num %}
-                                    <a class="btn btn-info mb-4" href="{{ url_for('admin.all_clients',  page=page_num) }}">{{ page_num }}</a>
-                                {% else %}
-                                 <a class="btn btn-outline-info mb-4" href="{{ url_for('admin.all_clients', page=page_num) }}">{{ page_num }}</a>
-                                {% endif %}
-                            {% else %}
-                                    ...
-                            {% endif %}
-                            </td>
-                      {% endfor %}
-
+                              <p> No user found </p>
+                          </td>
                       </tr>
+                      {% endif %}
+
+
+                      </tbody>
+                    </table>
+
+                  </div>
+                </div>
+              </div>
+
+
+<div class="col-12 mt-3">
+                <div class="card">
+                  <div class="card-header">
+                    <h3 class="card-title">Results for Staff matching "{{ query_string }}"</h3>
+                  </div>
+
+                  <div class="table-responsive">
+                    <table class="table card-table table-vcenter text-nowrap">
+                      <thead>
+                        <tr>
+
+                          <th>Fullname</th>
+                          <th>Email</th>
+                            <th>Role</th>
+                          <th>Date joined</th>
+                          <th>Schedules</th>
+                          <th>Status</th>
+                          <th></th>
+                          <th></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                      {% if staff %}
+                      {% for staff in staff %}
+                        <tr>
+
+                          <td><a href="{{ url_for('admin.edit_staff', staff_id=staff.id) }}" class="text-inherit">{{ staff.fullname }}</a></td>
+                          <td>
+                            {{ staff.email }}
+                          </td>
+                            <td>{{ staff.role }}</td>
+                          <td>
+                            {{ staff.date_joined }}
+                          </td>
+                          <td>
+                              <a href="{{ url_for('admin.staff_schedules', staff_id=staff.id) }}">{{ staff.schedule|count }}</a>
+                          </td>
+                            <td>
+                                {% if staff.active %}
+                                <span class="badge badge-success">Active</span>
+                                {% else %}
+                                <span class="badge badge-danger">Inactive</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                      {% endfor %}
+                      {% else %}
+                      <tr>
+                          <td colspan="7">
+                              <p> No staff found </p>
+                          </td>
+                      </tr>
+                      {% endif %}
 
 
                       </tbody>
@@ -159,5 +260,6 @@
           </div>
         </div>
       </div>
+
 
 {% endblock %}

@@ -15,7 +15,7 @@
                     </div>
                   </li>
                   <li class="nav-item dropdown">
-                    <a href="javascript:void(0)" class="nav-link active" data-toggle="dropdown"><i class="fe fe-calendar"></i> Client</a>
+                    <a href="javascript:void(0)" class="nav-link" data-toggle="dropdown"><i class="fe fe-calendar"></i> Client</a>
                     <div class="dropdown-menu dropdown-menu-arrow">
                       <a href="{{ url_for('admin.create_client') }}" class="dropdown-item ">Create New Client</a>
                       <a href="{{ url_for('admin.all_clients') }}" class="dropdown-item ">All Clients</a>
@@ -38,15 +38,16 @@
 
                     </div>
                   </li>
+
                     <li class="nav-item dropdown">
-                    <a href="javascript:void(0)" class="nav-link" data-toggle="dropdown"><i class="fe fe-calendar"></i> Users</a>
+                    <a href="javascript:void(0)" class="nav-link active" data-toggle="dropdown"><i class="fe fe-calendar"></i> Users</a>
                     <div class="dropdown-menu dropdown-menu-arrow">
                       <a href="{{ url_for('auth.create_user') }}" class="dropdown-item ">Create New User</a>
                       <a href="{{ url_for('auth.all_users') }}" class="dropdown-item ">All Users</a>
 
                     </div>
                   </li>
-                    <li class="nav-item dropdown">
+                     <li class="nav-item dropdown">
                     <a href="{{ url_for('admin.download_timesheet') }}" class="nav-link"><i class="fe fe-calendar"></i> Download Timesheet</a>
 
                   </li>
@@ -70,7 +71,7 @@
 <div class="col-12 mt-3">
                 <div class="card">
                   <div class="card-header">
-                    <h3 class="card-title">All Clients</h3>
+                    <h3 class="card-title">All Users</h3>
                   </div>
 
                   <div class="table-responsive">
@@ -80,45 +81,44 @@
 
                           <th>Fullname</th>
                           <th>Email</th>
+
                           <th>Date joined</th>
-                          <th>Schedules</th>
+
                           <th>Status</th>
                           <th></th>
                           <th></th>
                         </tr>
                       </thead>
                       <tbody>
-                      {% if clients.items %}
-                      {% for client in clients.items %}
+                      {% if users.items %}
+                      {% for user in users.items %}
                         <tr>
 
-                          <td><a href="invoice.html" class="text-inherit">{{ client.fullname }}</a></td>
+                          <td><a href="{{ url_for('auth.edit_user', user_id=user.id) }}" class="text-inherit">{{ user.fullname }}</a></td>
                           <td>
-                            {{ client.email }}
+                            {{ user.email }}
                           </td>
 
                           <td>
-                            {{ client.date_joined }}
+                            {{ user.date_joined }}
                           </td>
-                          <td>
-                            {{ client.schedule|count }}
-                          </td>
+
                             <td>
-                                {% if client.active %}
-                                <span class="badge badge-success">Active</span>
+                                {% if user.verified %}
+                                <span class="badge badge-success">Verified</span>
                                 {% else %}
-                                <span class="badge badge-danger">Inactive</span>
+                                <span class="badge badge-danger">Unverified</span>
                                 {% endif %}
                             </td>
 
                           <td class="text-right">
                             <a href="javascript:void(0)" class="btn btn-secondary btn-sm">Manage</a>
                             <div class="dropdown">
-                              <a href="{{ url_for('admin.delete_client', client_id=client.id) }} "class="btn btn-danger btn-sm" style="color: white">Delete</a>
+                              <a href="{{ url_for('auth.delete_user', user_id=user.id) }} "class="btn btn-danger btn-sm" style="color: white">Delete</a>
                             </div>
                           </td>
                           <td>
-                            <a class="icon" href="javascript:void(0)">
+                            <a class="icon" href="{{ url_for('auth.edit_user', user_id=user.id) }}">
                               <i class="fe fe-edit"></i>
                             </a>
                           </td>
@@ -127,18 +127,18 @@
                       {% else %}
                       <tr>
                           <td colspan="7">
-                              <p> No client listed </p>
+                              <p> No user listed </p>
                           </td>
                       </tr>
                       {% endif %}
                       <tr>
                           <td colspan="7">
-                          {% for page_num in clients.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+                          {% for page_num in users.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
                             {% if page_num %}
-                                {% if clients.page == page_num %}
-                                    <a class="btn btn-info mb-4" href="{{ url_for('admin.all_clients',  page=page_num) }}">{{ page_num }}</a>
+                                {% if users.page == page_num %}
+                                    <a class="btn btn-info mb-4" href="{{ url_for('auth.all_users',  page=page_num) }}">{{ page_num }}</a>
                                 {% else %}
-                                 <a class="btn btn-outline-info mb-4" href="{{ url_for('admin.all_clients', page=page_num) }}">{{ page_num }}</a>
+                                 <a class="btn btn-outline-info mb-4" href="{{ url_for('auth.all_users', page=page_num) }}">{{ page_num }}</a>
                                 {% endif %}
                             {% else %}
                                     ...
