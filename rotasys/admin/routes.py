@@ -1,5 +1,5 @@
 import datetime
-from flask import Blueprint, render_template, url_for, request, flash, redirect
+from flask import Blueprint, render_template, url_for, request, flash, redirect, send_file
 from flask_login import login_required, current_user
 
 from rotasys import db
@@ -298,11 +298,19 @@ def generate_rota(week_number=None):
             staff_schedules_ = Schedule.query.filter_by(staff_id=staff).filter_by(week_number=week_number)\
                 .filter_by(day=day).order_by(Schedule.day_number.asc()).all()
             weekdays.append(staff_schedules_)
+
         schedules.append({"staff_id": staff, "days": weekdays})
 
     start_date = get_start_date(week_number)
     end_date = get_end_date(week_number)
     return render_template("rota.html", schedules=schedules, week_number=week_number)
+
+
+@admin.route("/download/timesheet")
+def download_timesheet():
+
+    return send_file("static/files/timesheet.pdf", mimetype="application/pdf")
+
 
 
 
