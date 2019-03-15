@@ -358,7 +358,7 @@ def generate_rota(week_number=None):
 @admin.route("/download/timesheet")
 def download_timesheet():
 
-    return redirect("rota/static/assets/files/timesheet.pdf")
+    return redirect("static/assets/files/timesheet.pdf")
 
 
 @admin.route("/download/report/<int:week_number>/<int:year>")
