@@ -68,7 +68,10 @@
                 {% endif %}
               {% endwith %}
 
+{% if clients|count > 0 %}
+
 <div class="col-12 mt-3">
+
                 <div class="card">
                   <div class="card-header">
                     <h3 class="card-title">Results for Clients matching "{{ query_string }}"</h3>
@@ -89,8 +92,7 @@
                         </tr>
                       </thead>
                       <tbody>
-                      {% if clients %}
-                      {% for client in clients %}
+                            {% for client in clients %}
                         <tr>
 
                           <td><a href="#" class="text-inherit">{{ client.fullname }}</a></td>
@@ -114,16 +116,6 @@
 
                         </tr>
                       {% endfor %}
-                      {% else %}
-                      <tr>
-                          <td colspan="7">
-                              <p> No client found </p>
-                          </td>
-                      </tr>
-                      {% endif %}
-
-
-
                       </tbody>
                     </table>
 
@@ -131,8 +123,10 @@
                 </div>
               </div>
 
+  {% endif %}
 
 
+ {% if users|count > 0 %}
 <div class="col-12 mt-3">
                 <div class="card">
                   <div class="card-header">
@@ -155,7 +149,7 @@
                         </tr>
                       </thead>
                       <tbody>
-                      {% if users %}
+
                       {% for user in users %}
                         <tr>
 
@@ -178,14 +172,6 @@
 
                         </tr>
                       {% endfor %}
-                      {% else %}
-                      <tr>
-                          <td colspan="7">
-                              <p> No user found </p>
-                          </td>
-                      </tr>
-                      {% endif %}
-
 
                       </tbody>
                     </table>
@@ -195,6 +181,8 @@
               </div>
 
 
+{% endif %}
+{% if staff|count > 0 %}
 <div class="col-12 mt-3">
                 <div class="card">
                   <div class="card-header">
@@ -217,7 +205,7 @@
                         </tr>
                       </thead>
                       <tbody>
-                      {% if staff %}
+
                       {% for staff in staff %}
                         <tr>
 
@@ -241,13 +229,7 @@
                             </td>
                         </tr>
                       {% endfor %}
-                      {% else %}
-                      <tr>
-                          <td colspan="7">
-                              <p> No staff found </p>
-                          </td>
-                      </tr>
-                      {% endif %}
+
 
 
                       </tbody>
@@ -260,6 +242,7 @@
           </div>
         </div>
       </div>
+{% endif %}
 
 
 {% endblock %}

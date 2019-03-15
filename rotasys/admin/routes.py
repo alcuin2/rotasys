@@ -350,9 +350,10 @@ def search():
     users = User.query.filter(User.fullname.contains(query_string)).all()
     staff = Staff.query.filter(Staff.fullname.contains(query_string)).all()
     clients = Client.query.filter(Client.fullname.contains(query_string)).all()
-
-    flash("Search results", "info")
-
+    if len(users) == 0 and len(staff) == 0 and len(clients) == 0:
+        flash(f"No results found for this query '{query_string}'", "danger")
+    else:
+        flash(f"Search results for '{query_string}'", "info")
     return render_template("search_results.html", users=users, staff=staff,
                            clients=clients, query_string=query_string)
 
