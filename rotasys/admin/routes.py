@@ -390,11 +390,6 @@ def download_timesheet():
     return redirect("static/assets/files/timesheet.pdf")
 
 
-@admin.route("/download/report/<int:week_number>/<int:year>")
-def download_report(week_number, year):
-    pass
-
-
 
 
 
