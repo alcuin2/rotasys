@@ -15,7 +15,7 @@ class Staff(db.Model):
 
     def __repr__(self):
 
-        return f"Staff: {self.fullname}"
+        return f"{self.fullname}"
 
 
 class Client(db.Model):

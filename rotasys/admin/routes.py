@@ -1,6 +1,5 @@
 import datetime
-import os
-from flask import Blueprint, render_template, url_for, request, flash, redirect, send_file
+from flask import Blueprint, render_template, url_for, request, flash, redirect, Response
 from flask_login import login_required, current_user
 
 from rotasys import db
@@ -16,9 +15,10 @@ admin = Blueprint("admin", __name__)
 
 
 @admin.route("/")
-@admin.route("/<int:week_number>")
+@admin.route("/<int:week_number>/<int:year>")
+@admin.route("/<string:download>/<int:week_number>/<int:year>")
 @login_required
-def home(week_number=None):
+def home(week_number=None, year=None, download=None):
 
     staff = Staff.query.all()
     clients = Client.query.all()
@@ -46,7 +46,20 @@ def home(week_number=None):
     start_date = get_start_date(week_number)
     end_date = get_end_date(week_number)
 
-    return render_template("home.html", title="RotaSys | Dashboard",
+    if download:
+        file = f"Rota Report Summary for week {week_number}, {year}.\n\nStaff - Client Shift Date \n\n"
+        for sch in schedules_:
+            print(sch["days"])
+            for day in sch["days"]:
+                if len(day) > 0:
+                    for item in day:
+                        file = file + str(item.staff) + " - " + str(item.client) + " " + str(item.shift) \
+                               + " " + item.date.strftime("%Y-%m-%d") + "\n\n"
+        return Response(file,
+                        mimetype="text/plain",
+                        headers={"Content-Disposition": "attachment;filename=report.txt"})
+    else:
+        return render_template("home.html", title="RotaSys | Dashboard",
                            staff=staff, clients=clients, schedules=schedules,
                            schedules_=schedules_, week_number=week_number,
                            roles=roles, users=users, shifts=shifts, year=year)
