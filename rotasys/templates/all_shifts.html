@@ -90,19 +90,19 @@
                       {% for shift in shifts.items %}
                         <tr>
 
-                          <td><a href="#" class="text-inherit">{{ shift.title }}</a></td>
+                          <td><a href="{{ url_for('admin.edit_shift', shift_id=shift.id) }}" class="text-inherit">{{ shift.title }}</a></td>
                           <td>
-                            {{ shift.date_joined }}
+                            {{ shift.date_joined.strftime('%Y-%m-%d')  }}
                           </td>
 
                           <td class="text-right">
-                            <a href="javascript:void(0)" class="btn btn-secondary btn-sm">Manage</a>
+
                             <div class="dropdown">
                               <a href="{{ url_for('admin.delete_shift', shift_id=shift.id) }} "class="btn btn-danger btn-sm" style="color: white">Delete</a>
                             </div>
                           </td>
                           <td>
-                            <a class="icon" href="javascript:void(0)">
+                            <a class="icon" href="{{ url_for('admin.edit_shift', shift_id=shift.id) }}">
                               <i class="fe fe-edit"></i>
                             </a>
                           </td>

@@ -24,13 +24,13 @@ def get_staff_role(staff_id):
 @app.template_filter()
 def format_schedules(schedule_list):
     if len(schedule_list) == 1:
-        return schedule_list[0]
+        return str(schedule_list[0]) + " " + "<b>" + schedule_list[0].date.strftime("%B %d, %Y") + "</b>"
     elif len(schedule_list) == 0:
-        return None
+        return "----------"
     else:
         start_str = ""
         for item in schedule_list:
-            start_str = start_str + str(item) + "<br />"
+            start_str = start_str + str(item) + " " + item.date.strftime("%B %d, %Y") + "<br />"
         return start_str
 
 

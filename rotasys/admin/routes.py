@@ -72,7 +72,14 @@ def create_staff():
     roles = Role.query.all()
     if request.method == "POST":
         form_dict = request.form.to_dict()
-        new_staff = Staff(fullname=form_dict["fullname"], email=form_dict["email"], active=True, role=form_dict["role"])
+        new_staff = Staff(fullname=form_dict["fullname"],
+                          email=form_dict["email"],
+                          active=True,
+                          role=form_dict["role"],
+                          address=form_dict['address'],
+                          phone=form_dict['phone'],
+                          ni_number=form_dict['ninumber'],
+                          dbs_number=form_dict['dbsnumber'])
         db.session.add(new_staff)
         db.session.commit()
         flash("New staff added successfully", "success")
@@ -143,7 +150,9 @@ def create_client():
 
     if request.method == "POST":
         form_dict = request.form.to_dict()
-        new_client = Client(fullname=form_dict["fullname"], email=form_dict["email"], active=True)
+        new_client = Client(fullname=form_dict["fullname"], email=form_dict["email"], active=True,
+                            manager=form_dict["manager"], phone=form_dict["phone"], address=form_dict["address"],
+                            post_code=form_dict["postcode"])
         db.session.add(new_client)
         db.session.commit()
         flash("New client added successfully", "success")
@@ -184,6 +193,29 @@ def delete_client(client_id):
     return redirect(url_for("admin.all_clients"))
 
 
+@admin.route("/client/edit/<int:client_id>", methods=["POST", "GET"])
+@login_required
+def edit_client(client_id):
+
+    client = Client.query.get(client_id)
+    if client is None:
+        return render_template("404.html", title="RotaSys | Not Found")
+    if request.method == "POST":
+        form_dict = request.form.to_dict()
+        client.fullname = form_dict["fullname"]
+        client.email = form_dict["email"]
+        client.manager = form_dict["manager"]
+        client.phone = form_dict["phone"]
+        client.address = form_dict["address"]
+        client.post_code = form_dict["postcode"]
+        client.date_updated = datetime.datetime.utcnow()
+        db.session.commit()
+        flash("Client edited", "success")
+        return redirect(url_for("admin.all_clients"))
+
+    return render_template("edit_client.html", client=client)
+
+
 @admin.route("/role/create", methods=["POST", "GET"])
 @login_required
 def create_role():
@@ -197,6 +229,26 @@ def create_role():
         return redirect(url_for("admin.create_role"))
 
     return render_template("create_role.html", title="RotaSys | Create New Role")
+
+
+@admin.route("/role/edit/<int:role_id>", methods=["POST", "GET"])
+@login_required
+def edit_role(role_id):
+    role = Role.query.get(role_id)
+    if role is None:
+        return render_template("404.html", title="RotaSys | Not Found")
+
+    if request.method == "POST":
+        form_dict = request.form.to_dict()
+        role.date_updated = datetime.datetime.utcnow()
+        staff = Staff.query.filter_by(role=role.title).all()
+        for s in staff:
+            s.role = form_dict["title"]
+        role.title = form_dict["title"]
+        db.session.commit()
+        flash("Role edited", "success")
+        return redirect(url_for("admin.all_roles"))
+    return render_template("edit_role.html", role=role)
 
 
 @admin.route("/role/<int:role_id>")
@@ -268,6 +320,26 @@ def delete_shift(shift_id):
     return redirect(url_for("admin.all_shifts"))
 
 
+@admin.route("/shift/edit/<int:shift_id>", methods=["POST", "GET"])
+@login_required
+def edit_shift(shift_id):
+    shift = Shift.query.get(shift_id)
+    if shift is None:
+        return render_template("404.html", title="RotaSys | Not Found")
+
+    if request.method == "POST":
+        form_dict = request.form.to_dict()
+        schedules = Schedule.query.filter_by(shift=shift.title).all()
+        for schedule in schedules:
+            schedule.shift = form_dict['title']
+        shift.title = form_dict["title"]
+        shift.date_updated = datetime.datetime.utcnow()
+        db.session.commit()
+        flash("Shift edited", "success")
+        return redirect(url_for("admin.all_shifts"))
+    return render_template("edit_shift.html", shift=shift)
+
+
 @admin.route("/schedule/staff/<int:staff_id>", methods=["POST", "GET"])
 @login_required
 def add_staff_schedule(staff_id):
@@ -279,7 +351,6 @@ def add_staff_schedule(staff_id):
     shifts = Shift.query.all()
     if request.method == "POST":
         form_dict = request.form.to_dict()
-        print(form_dict)
         date_string = form_dict["date"]
         date = datetime.datetime.strptime(date_string, "%Y-%m-%d").date()
         week_number = get_week_number(date)
@@ -329,16 +400,35 @@ def delete_schedule(schedule_id):
     return redirect(url_for("admin.staff_schedules", staff_id=schedule.staff_id))
 
 
-@admin.route("/schedule/edit/<int:schedule_id>")
+@admin.route("/schedule/edit/<int:schedule_id>", methods=["POST", "GET"])
 def edit_schedule(schedule_id):
     schedule = Schedule.query.get(schedule_id)
     if schedule is None:
         return render_template("404.html", title="RotaSys | Not Found")
+    clients = Client.query.all()
+    shifts = Shift.query.all()
+    staff = Staff.query.get(schedule.staff_id)
+    if request.method == "POST":
+        form_dict = request.form.to_dict()
+        date_string = form_dict["date"]
+        date = datetime.datetime.strptime(date_string, "%Y-%m-%d").date()
+        week_number = get_week_number(date)
+        day = get_week_day(date)
+        month = get_month(date)
+        year = get_year(date)
+        schedule.client_id = form_dict["client"]
+        schedule.shift = form_dict["shift"]
+        schedule.date = date
+        schedule.week_number = week_number
+        schedule.day = day
+        schedule.month = month
+        schedule.year = year
+        schedule.day_number = date.isocalendar()[2]
+        db.session.commit()
+        flash("Schedule edited", "info")
+        return redirect(url_for("admin.staff_schedules", staff_id=schedule.staff_id))
 
-    db.session.delete(schedule)
-    db.session.commit()
-    flash("Delete successful", "info")
-    return redirect(url_for("admin.staff_schedules", staff_id=schedule.staff_id))
+    return render_template("edit_schedules.html", shifts=shifts, clients=clients, schedule=schedule, staff=staff)
 
 
 @admin.route("/search")

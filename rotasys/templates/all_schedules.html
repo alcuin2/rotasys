@@ -72,6 +72,9 @@
                   <div class="card-header">
                     <h3 class="card-title">Schedules for <b>{{ staff.fullname }}</b></h3>
                   </div>
+                    <div> <a class="btn btn-info mb-2 ml-5 mt-2"
+                           href="{{ url_for('admin.add_staff_schedule', staff_id=staff.id) }}">
+                      Add Schedule</a></div>
 
                   <div class="table-responsive">
                     <table class="table card-table table-vcenter text-nowrap">
@@ -85,6 +88,7 @@
 
                           <th>Client</th>
                           <th></th>
+                            <th></th>
                         </tr>
                       </thead>
                       <tbody>
@@ -92,7 +96,7 @@
                       {% for schedule in schedules.items %}
                         <tr>
 
-                          <td><a href="{{ url_for('admin.edit_staff', staff_id=staff.id) }}" class="text-inherit">{{ schedule.shift }}</a></td>
+                          <td><a href="{{ url_for('admin.edit_schedule', schedule_id=schedule.id) }}" class="text-inherit">{{ schedule.shift }}</a></td>
                           <td>
                             {{ schedule.day }}
                           </td>
@@ -106,13 +110,12 @@
 
 
                           <td class="text-right">
-                            <a href="javascript:void(0)" class="btn btn-secondary btn-sm">Manage</a>
                             <div class="dropdown">
                               <a href="{{ url_for('admin.delete_schedule', schedule_id=schedule.id) }} "class="btn btn-danger btn-sm" style="color: white">Delete</a>
                             </div>
                           </td>
                           <td>
-                            <a class="icon" href="#">
+                            <a class="icon" href="{{ url_for('admin.edit_schedule', schedule_id=schedule.id) }}">
                               <i class="fe fe-edit"></i>
                             </a>
                           </td>

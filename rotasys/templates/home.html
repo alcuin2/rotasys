@@ -152,7 +152,7 @@
 <div class="col-12 mt-3">
                 <div class="card">
                   <div class="card-header">
-                    <h3 class="card-title">Rota </h3><br />
+                    <h3 class="card-title">Rota for <b>week {{ week_number }}, {{ year }}</b></h3><br />
 
 
 
@@ -184,7 +184,7 @@
                       {% for schedule in schedules_ %}
                         <tr>
 
-                          <td><a href="#" class="text-inherit">{{ schedule["staff_id"]|get_staff_from_schedule }}</a></td>
+                          <td><a href="{{ url_for('admin.staff_schedules', staff_id=schedule['staff_id']) }}" class="text-inherit">{{ schedule["staff_id"]|get_staff_from_schedule }}</a></td>
                           <td>
                             {{ schedule["staff_id"]|get_staff_role }}
                           </td>

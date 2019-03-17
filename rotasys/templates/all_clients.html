@@ -72,6 +72,9 @@
                   <div class="card-header">
                     <h3 class="card-title">All Clients</h3>
                   </div>
+                    <div> <a class="btn btn-info mb-2 ml-5 mt-2"
+                           href="{{ url_for('admin.create_client') }}">
+                      Add new client</a></div>
 
                   <div class="table-responsive">
                     <table class="table card-table table-vcenter text-nowrap">
@@ -92,13 +95,13 @@
                       {% for client in clients.items %}
                         <tr>
 
-                          <td><a href="invoice.html" class="text-inherit">{{ client.fullname }}</a></td>
+                          <td><a href="{{ url_for('admin.edit_client', client_id=client.id) }}" class="text-inherit">{{ client.fullname }}</a></td>
                           <td>
                             {{ client.email }}
                           </td>
 
                           <td>
-                            {{ client.date_joined }}
+                            {{ client.date_joined.strftime('%Y-%m-%d') }}
                           </td>
                           <td>
                             {{ client.schedule|count }}
@@ -112,13 +115,12 @@
                             </td>
 
                           <td class="text-right">
-                            <a href="javascript:void(0)" class="btn btn-secondary btn-sm">Manage</a>
                             <div class="dropdown">
                               <a href="{{ url_for('admin.delete_client', client_id=client.id) }} "class="btn btn-danger btn-sm" style="color: white">Delete</a>
                             </div>
                           </td>
                           <td>
-                            <a class="icon" href="javascript:void(0)">
+                            <a class="icon" href="{{ url_for('admin.edit_client', client_id=client.id) }}">
                               <i class="fe fe-edit"></i>
                             </a>
                           </td>

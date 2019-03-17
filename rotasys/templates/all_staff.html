@@ -73,6 +73,10 @@
                   <div class="card-header">
                     <h3 class="card-title">All Staff</h3>
                   </div>
+                    <div> <a class="btn btn-info mb-2 ml-5 mt-2"
+                           href="{{ url_for('admin.create_staff') }}">
+                      Add new staff</a></div>
+
 
                   <div class="table-responsive">
                     <table class="table card-table table-vcenter text-nowrap">
@@ -100,7 +104,7 @@
                           </td>
                             <td>{{ staff.role }}</td>
                           <td>
-                            {{ staff.date_joined }}
+                            {{ staff.date_joined.strftime('%Y-%m-%d') }}
                           </td>
                           <td>
                               <a href="{{ url_for('admin.staff_schedules', staff_id=staff.id) }}">{{ staff.schedule|count }}</a>
@@ -114,7 +118,7 @@
                             </td>
 
                           <td class="text-right">
-                            <a href="javascript:void(0)" class="btn btn-secondary btn-sm">Manage</a>
+                            <a href="{{ url_for('admin.add_staff_schedule', staff_id=staff.id) }}" class="btn btn-secondary btn-sm">Add Schedule</a>
                             <div class="dropdown">
                               <a href="{{ url_for('admin.delete_staff', staff_id=staff.id) }} "class="btn btn-danger btn-sm" style="color: white">Delete</a>
                             </div>
@@ -134,7 +138,7 @@
                       </tr>
                       {% endif %}
                       <tr>
-                          <td colspan="7">
+                          <td colspan="8">
                           {% for page_num in staff.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
                             {% if page_num %}
                                 {% if staff.page == page_num %}

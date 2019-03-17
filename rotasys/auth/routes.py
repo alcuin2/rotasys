@@ -36,7 +36,7 @@ def login():
 
 
 @auth.route("/user/create", methods=['GET', 'POST'])
-@login_required
+#@login_required
 def create_user():
     if request.method == "POST":
         email = request.form.get("email", "")

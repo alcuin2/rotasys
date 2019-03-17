@@ -88,6 +88,26 @@
                     <label class="form-label">Email address</label>
                     <input type="email" class="form-control" placeholder="Enter email" name="email" value="{{ staff.email }}" required>
                   </div>
+                   <div class="form-group">
+                    <label class="form-label">Phone</label>
+                    <input type="tel" class="form-control" placeholder="Enter phone number" name="phone" value="{{ staff.phone }}" required>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Address</label>
+                    <input type="text" class="form-control" placeholder="Address" name="address" value="{{ staff.address }}" required>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Postcode</label>
+                    <input type="text" class="form-control" placeholder="Postcode" name="postcode" value="{{ staff.post_code }}" required />
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">NI number</label>
+                    <input type="text" class="form-control" placeholder="NI number" name="ninumber" value="{{ staff.ni_number }}" required />
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">DBS Number</label>
+                    <input type="text" class="form-control" placeholder="DBS Number" name="dbsnumber" value="{{ staff.dbs_number }}" required>
+                  </div>
                   <div class="form-group">
                     <label class="form-label">Role</label>
                     <select class="form-control" name="role">

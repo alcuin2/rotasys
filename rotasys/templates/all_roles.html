@@ -89,19 +89,19 @@
                       {% for role in roles.items %}
                         <tr>
 
-                          <td><a href="#" class="text-inherit">{{ role.title }}</a></td>
+                          <td><a href="{{ url_for('admin.edit_role', role_id=role.id) }}" class="text-inherit">{{ role.title }}</a></td>
                           <td>
-                            {{ role.date_joined }}
+                            {{ role.date_joined.strftime('%Y-%m-%d') }}
                           </td>
 
                           <td class="text-right">
-                            <a href="javascript:void(0)" class="btn btn-secondary btn-sm">Manage</a>
+
                             <div class="dropdown">
                               <a href="{{ url_for('admin.delete_role', role_id=role.id) }} "class="btn btn-danger btn-sm" style="color: white">Delete</a>
                             </div>
                           </td>
                           <td>
-                            <a class="icon" href="javascript:void(0)">
+                            <a class="icon" href="{{ url_for('admin.edit_role', role_id=role.id) }}">
                               <i class="fe fe-edit"></i>
                             </a>
                           </td>
@@ -109,7 +109,7 @@
                       {% endfor %}
                       {% else %}
                       <tr>
-                          <td colspan="7">
+                          <td colspan="4">
                               <p> No role listed </p>
                           </td>
                       </tr>
